@@ -100,7 +100,7 @@ String RCP_Name;
 //void write_value(byte id, int n_bit);
 
 #define count_device  3 //количество устройств
-add r[count_device]; //создаём массив этих устройств 
+//add r[count_device]; //создаём массив этих устройств 
 program prg1;
 void setup() {
   enc.begin(); 
@@ -108,10 +108,10 @@ void setup() {
 
   eeprom_str_adr(); 
 
-  for(byte n = 0; n < count_device; n++) {
-    CM(n);
-    structures(n);
-    }  
+//  for(byte n = 0; n < count_device; n++) {
+//    CM(n);
+//    structures(n);
+//    }  
 
   pinMode(buttonPin, INPUT); 
   for(byte n = 0; n < 10; n++) {
@@ -132,27 +132,27 @@ void setup() {
 void loop() {
 
 
-  for(byte n = 0; n < count_device; n++) {
-    CM(n);
+  //for(byte n = 0; n < count_device; n++) {
+ //   CM(n);
 //    structures(n);
-    }
+ //   }
   display.clearDisplay();
   display.setCursor(0,0);
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.println("PRESS BTN");
-  display.println(r[i].name);
-  display.println(i);
+//  display.println(r[i].name);
+//  display.println(i);
 
   display.setCursor(56,9);
   display.print("STS.inAuto=");
-  display.println(r[i].STS.inAuto);
+ // display.println(r[i].STS.inAuto);
   display.setCursor(56,18);
   display.print("STS.isRun=");
-  display.println(r[i].STS.isRun); 
+ // display.println(r[i].STS.isRun); 
   display.setCursor(56,27);
   display.print("PAR.PV");
-  display.println(r[i].PAR.PV);
+//  display.println(r[i].PAR.PV);
   display.println(startTime);
   display.println(stopTime);
 //  display.println(r[i].STS.K);
@@ -164,12 +164,12 @@ void loop() {
     
   encoder();
   
-  if (i >= count_device){i=0;}
-  if (i < 0){i= count_device - 1;}   
+ // if (i >= count_device){i=0;}
+ // if (i < 0){i= count_device - 1;}   
   
   if (!Btn){
     delay(500);
-    screen(prg1.ch1);
+    screen_change_ch(prg1);
     delay(500);
     }
 

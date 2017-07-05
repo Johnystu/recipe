@@ -1,4 +1,81 @@
-void screen(struct channel ch){
+void screen_change_ch(struct program prg){
+  i=1;
+  byte s=i;
+  unsigned long prevTime=millis();
+ 
+  while(1){ 
+ //   structures(id);
+    encoder();
+        
+    if (s != i) {
+      prevTime=millis();
+      s=i;
+      }
+      
+    display.clearDisplay();
+    display.setCursor(0,0);
+    display.setTextSize(1);
+
+    if (i == -1){i=4;}
+
+    //if (i == 0) {display.setTextColor(BLACK,WHITE);}
+   //{display.setTextColor(WHITE);}
+   // display.println(ch.ch_name);
+    
+    if (i == 1) {display.setTextColor(BLACK,WHITE);}
+    else {display.setTextColor(WHITE);}
+    display.println(prg.ch1.ch_name);
+    //display.println(EEPROM.read(ch.K));
+    
+    if (i == 2) {display.setTextColor(BLACK,WHITE);}
+    else {display.setTextColor(WHITE);}
+//    display.print("V=");
+    display.println(prg.ch2.ch_name);
+    //display.println(rele1.PAR.Pin);
+    
+    if (i == 3) {display.setTextColor(BLACK,WHITE);}
+    else {display.setTextColor(WHITE);}
+//    display.print("Pin=");
+    display.println(prg.ch3.ch_name);
+ 
+     if (i == 4) {display.setTextColor(BLACK,WHITE);}
+    else {display.setTextColor(WHITE);}
+//    display.print("Pin=");
+    display.println(prg.ch4.ch_name);
+ 
+ 
+    
+    if (i == 0) {display.setTextColor(BLACK,WHITE);}
+    else {display.setTextColor(WHITE);}
+    display.print("EXIT");
+    
+    if (i == 5){i=0;}
+    
+    display.display();
+
+   if (!Btn){
+     delay(500);
+     switch (i){
+       case 1:{screen_ch_setting(prg.ch1); prevTime=millis(); break;}
+       case 2:{screen_ch_setting(prg.ch2); prevTime=millis(); break;}
+       case 3:{screen_ch_setting(prg.ch3); prevTime=millis(); break;}
+       case 4:{screen_ch_setting(prg.ch4); prevTime=millis(); break;}       
+ //      case 0:{break;}
+      
+   }
+   
+ }
+
+
+ //   if (!Btn && (i == 1 || i == 2 || i == 3)){write_value(id, i); prevTime=millis();}
+ //   if (!Btn && (i == 1 || i == 2 || i == 3)){write_value_analog(ch, i); prevTime=millis();}
+    if ((!Btn && i == 0) || (millis()-  prevTime>10000)){  break;}
+
+
+  }//while
+} //screen
+
+void screen_ch_setting(struct channel ch){
   i=0;
   byte s=i;
   unsigned long prevTime=millis();
@@ -41,7 +118,7 @@ void screen(struct channel ch){
     if (i == 0) {display.setTextColor(BLACK,WHITE);}
     else {display.setTextColor(WHITE);}
     display.print("EXIT");
-    
+    display.println(i);
     if (i == 4){i=0;}
     
     display.display();
@@ -51,7 +128,7 @@ void screen(struct channel ch){
        case 1:{write_value_analog(ch.K); prevTime=millis(); break;}
        case 2:{write_value_analog(ch.V); prevTime=millis(); break;}
        case 3:{write_value_analog(ch.Pin);prevTime=millis(); break;}
- //      case 0:{break;}
+       //case 0:{break;}
       
    }
    
@@ -60,11 +137,14 @@ void screen(struct channel ch){
 
  //   if (!Btn && (i == 1 || i == 2 || i == 3)){write_value(id, i); prevTime=millis();}
  //   if (!Btn && (i == 1 || i == 2 || i == 3)){write_value_analog(ch, i); prevTime=millis();}
-    if ((!Btn && i == 0) || (millis()-  prevTime>10000)){ break;}
+    if ((!Btn && i == 0) || (millis()-  prevTime>10000)){ i = 1; break;}
 
 
   }//while
 } //screen
+
+
+
 
 void write_value_analog(byte addres)
 {
