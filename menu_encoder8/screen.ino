@@ -1,5 +1,5 @@
-void screen_change_ch(struct program prg){
-  i=1;
+void screen_recipe(struct program prg){
+  i=0;
   byte s=i;
   unsigned long prevTime=millis();
  
@@ -14,18 +14,83 @@ void screen_change_ch(struct program prg){
       
     display.clearDisplay();
     display.setCursor(0,0);
-    display.setTextSize(1);
+   // display.setTextSize(1);
+
+    if (i == -1){i=3;}
+
+    display.setTextColor(WHITE);
+    display.println(prg.RCP_Name);
+    display.println();
+    if (i == 1) {display.setTextColor(BLACK,WHITE);}
+    else {display.setTextColor(WHITE);}
+    display.println("START");
+ 
+    
+    if (i == 2) {display.setTextColor(BLACK,WHITE);}
+    else {display.setTextColor(WHITE);}
+//    display.print("V=");
+    display.println("RESET");
+    //display.println(rele1.PAR.Pin);
+    
+    if (i == 3) {display.setTextColor(BLACK,WHITE);}
+    else {display.setTextColor(WHITE);}
+//    display.print("Pin=");
+    display.println("Settings");
+ 
+    
+    if (i == 0) {display.setTextColor(BLACK,WHITE);}
+    else {display.setTextColor(WHITE);}
+    display.print("EXIT");
+    
+    if (i == 4){i=0;}
+    
+    display.display();
+  // if ((!Btn && i == 0) || (millis()-  prevTime>10000)){  break;}
+   if (!Btn){
+     delay(500);
+     switch (i){
+       //case 1:{screen_change_ch(prg); prevTime=millis(); break;}
+       //case 2:{screen_change_ch(prg.ch2); prevTime=millis(); break;}
+       case 3:{screen_change_ch(prg); prevTime=millis(); break;}
+       //case 4:{screen_ch_setting(prg.ch4); prevTime=millis(); break;}       
+ //      case 0:{break;}
+      
+   }
+   
+ }
+    if ((!Btn && i == 0) || (millis()-  prevTime>10000)){ break;}
+
+
+  }//while
+} //screen
+
+void screen_change_ch(struct program prg){
+  i=0;
+  byte s=i;
+  unsigned long prevTime=millis();
+ 
+  while(1){ 
+ //   structures(id);
+    encoder();
+        
+    if (s != i) {
+      prevTime=millis();
+      s=i;
+      }
+      
+    display.clearDisplay();
+    display.setCursor(0,0);
+   // display.setTextSize(1);
 
     if (i == -1){i=4;}
 
-    //if (i == 0) {display.setTextColor(BLACK,WHITE);}
-   //{display.setTextColor(WHITE);}
-   // display.println(ch.ch_name);
-    
+    display.setTextColor(WHITE);
+    display.println(prg.RCP_Name);
+    display.println();
     if (i == 1) {display.setTextColor(BLACK,WHITE);}
     else {display.setTextColor(WHITE);}
     display.println(prg.ch1.ch_name);
-    //display.println(EEPROM.read(ch.K));
+ 
     
     if (i == 2) {display.setTextColor(BLACK,WHITE);}
     else {display.setTextColor(WHITE);}
@@ -42,7 +107,7 @@ void screen_change_ch(struct program prg){
     else {display.setTextColor(WHITE);}
 //    display.print("Pin=");
     display.println(prg.ch4.ch_name);
- 
+    display.println();
  
     
     if (i == 0) {display.setTextColor(BLACK,WHITE);}
@@ -52,7 +117,7 @@ void screen_change_ch(struct program prg){
     if (i == 5){i=0;}
     
     display.display();
-
+  // if ((!Btn && i == 0) || (millis()-  prevTime>10000)){  break;}
    if (!Btn){
      delay(500);
      switch (i){
@@ -67,9 +132,7 @@ void screen_change_ch(struct program prg){
  }
 
 
- //   if (!Btn && (i == 1 || i == 2 || i == 3)){write_value(id, i); prevTime=millis();}
- //   if (!Btn && (i == 1 || i == 2 || i == 3)){write_value_analog(ch, i); prevTime=millis();}
-    if ((!Btn && i == 0) || (millis()-  prevTime>10000)){  break;}
+    if ((!Btn && i == 0) || (millis()-  prevTime>10000)){delay(500); break;}
 
 
   }//while
@@ -91,14 +154,15 @@ void screen_ch_setting(struct channel ch){
       
     display.clearDisplay();
     display.setCursor(0,0);
-    display.setTextSize(1);
+ //   display.setTextSize(1);
 
     if (i == -1){i=3;}
 
     //if (i == 0) {display.setTextColor(BLACK,WHITE);}
    {display.setTextColor(WHITE);}
     display.println(ch.ch_name);
-    
+    display.println();
+
     if (i == 1) {display.setTextColor(BLACK,WHITE);}
     else {display.setTextColor(WHITE);}
     display.print("K=");
@@ -115,6 +179,8 @@ void screen_ch_setting(struct channel ch){
     display.print("Pin=");
     display.println(EEPROM.read(ch.Pin));
     
+    display.println();  
+    
     if (i == 0) {display.setTextColor(BLACK,WHITE);}
     else {display.setTextColor(WHITE);}
     display.print("EXIT");
@@ -128,16 +194,15 @@ void screen_ch_setting(struct channel ch){
        case 1:{write_value_analog(ch.K); prevTime=millis(); break;}
        case 2:{write_value_analog(ch.V); prevTime=millis(); break;}
        case 3:{write_value_analog(ch.Pin);prevTime=millis(); break;}
+      // case 0: break;
        //case 0:{break;}
       
-   }
+   }//switch
    
  }
 
 
- //   if (!Btn && (i == 1 || i == 2 || i == 3)){write_value(id, i); prevTime=millis();}
- //   if (!Btn && (i == 1 || i == 2 || i == 3)){write_value_analog(ch, i); prevTime=millis();}
-    if ((!Btn && i == 0) || (millis()-  prevTime>10000)){ i = 1; break;}
+    if ((!Btn && i == 0) || (millis()-  prevTime>10000)){ delay(500); break;}
 
 
   }//while

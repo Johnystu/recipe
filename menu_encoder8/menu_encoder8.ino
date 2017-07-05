@@ -141,8 +141,10 @@ void loop() {
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.println("PRESS BTN");
-//  display.println(r[i].name);
-//  display.println(i);
+  display.println();
+  
+
+  display.println(i);
 
   display.setCursor(56,9);
   display.print("STS.inAuto=");
@@ -169,8 +171,8 @@ void loop() {
   
   if (!Btn){
     delay(500);
-    screen_change_ch(prg1);
-    delay(500);
+    screen_recipe(prg1);
+    //delay(500);
     }
 
 }//loop

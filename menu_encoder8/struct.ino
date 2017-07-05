@@ -4,26 +4,26 @@ void eeprom_str_adr()
   prg1.ch1.K = 10;
   prg1.ch1.V = 12;
   prg1.ch1.Pin = 14;
-  prg1.ch1.ch_name ="  PH DOWN  ";
+  prg1.ch1.ch_name ="PH_DN";
   
   prg1.ch2.K = 16;
   prg1.ch2.V = 18;
   prg1.ch2.Pin = 20;
-  prg1.ch2.ch_name ="  GREEN  ";
+  prg1.ch2.ch_name ="GREEN";
   
   prg1.ch3.K = 22;
   prg1.ch3.V = 24;
   prg1.ch3.Pin = 26;
-  prg1.ch3.ch_name ="  BLACK  ";
+  prg1.ch3.ch_name ="BLACK";
   
   prg1.ch4.K = 28;
   prg1.ch4.V = 30;
   prg1.ch4.Pin = 31;
-  prg1.ch4.ch_name ="  RED  ";
+  prg1.ch4.ch_name ="RED";
   
   prg1.Start = false;
   prg1.Stop = true;
-  prg1.RCP_Name = "5 10 15";
+  prg1.RCP_Name = "recipe_1";
      
 }
 
