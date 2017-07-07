@@ -148,10 +148,10 @@ void loop() {
   display.println(i);
 
   display.setCursor(56,9);
-  display.print("STS.inAuto=");
+//  display.print("STS.inAuto=");
  // display.println(r[i].STS.inAuto);
   display.setCursor(56,18);
-  display.print("STS.isRun=");
+ // display.print("STS.isRun=");
  // display.println(r[i].STS.isRun); 
   display.setCursor(56,27);
   display.print("PAR.PV");
