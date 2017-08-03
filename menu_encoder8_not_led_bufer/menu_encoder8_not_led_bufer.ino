@@ -48,52 +48,10 @@ bool step_ch2 = 0;
 bool step_ch3 = 0;
 bool step_ch4 = 0;
 
-
-
-
-
-unsigned long startTime;
-unsigned long stopTime;
-
 unsigned long startTime_ch;
 unsigned long stopTime_ch;
 
-//unsigned long startTime_ch1;
-//unsigned long stopTime_ch1;
-//
-//unsigned long startTime_ch2;
-//unsigned long stopTime_ch2;
-//
-//unsigned long startTime_ch3;
-//unsigned long stopTime_ch3;
-//
-//unsigned long startTime_ch4;
-//unsigned long stopTime_ch4;
-
-
-//const String str_RED PROGMEM = "RED";
-//const String str_PH PROGMEM = "PH";
-//const String str_GREEN PROGMEM = "GREEN";
-//const String str_BLACK PROGMEM = "BLACK";
-
 const String str[5] = {" ", "PH", "GREEN", "BLACK", "RED"};
-
-//struct ControlSignal
-//{
-//  bool MODE; //0 == auto 1 == manual
-//  bool CONTROL; //start stop
-//  bool INTERLOCK;
-//};
-//
-//struct Status 
-//{
-//  bool inAuto;
-//  bool isRun;
-//  bool isLock;
-//  
-// // bool V;
-// // bool K;
-//};
 
 struct Parametr
 {
@@ -104,13 +62,6 @@ struct Parametr
   byte K;
 };
 
-//struct add
-//{
-//  ControlSignal CS;     //вкладываем одну структуру в определение второй
-//  Status STS;
-//  Parametr PAR;
-//  String name;
-//};
 struct channel
 {
   byte K; 
@@ -118,25 +69,62 @@ struct channel
   byte Pin;
   String ch_name;
   bool IsRun;
+  unsigned long startTime;
+  unsigned long stopTime;
+ 
+  void start(){
+    byte _K = EEPROM.read(K); 
+    byte _V = EEPROM.read(V);
+    byte _Pin = EEPROM.read(Pin);
+    
+    startTime = millis();
+    stopTime = startTime + ((_V / _K) * 1000);
+ 
+    display.clear();
+    display.setCursor(0,0);
+  
+    display.print("Ch "); 
+    display.println(ch_name);
+
+    display.print("V = ");
+    display.println(_V);
+
+    display.print("Pin = ");
+    display.println(_Pin);
+  
+    while(1){
+  
+      digitalWrite(_Pin, HIGH);
+      display.setCursor(0,10);
+      display.print((stopTime - millis())/1000);
+      if (millis() > stopTime) {digitalWrite(_Pin, LOW); break;}
+      
+    } 
+  
+    };
+
+
 };
 struct program
 {
-channel ch1;
-channel ch2;
-channel ch3;
-channel ch4;
-bool Start;
-bool Stop;
-bool IsRun;
-String RCP_Name;
+  channel ch1;
+  channel ch2;
+  channel ch3;
+  channel ch4;
+  bool Start;
+  bool Stop;
+  bool IsRun;
+  String RCP_Name;
 
-void update(){
-
-  };
+  void start(){
+    ch1.start();
+    ch2.start();
+    ch3.start();
+    ch4.start();
+    };
 };
 
-//void screen(byte id);
-//void write_value(byte id, int n_bit);
+
 
 #define count_device  3 //количество устройств
 //add r[count_device]; //создаём массив этих устройств 
@@ -145,23 +133,6 @@ program prg1, prg2, prg3;
 
 program prg[count_device] = {prg1, prg2, prg3};
 
-
-
-//struct prg1 *p;
-//bool step_ch1 = 0;
-//bool step_ch2 = 0;
-//bool step_ch3 = 0;
-//bool step_ch4 = 0;
-//
-//const String str_PH PROGMEM = "PH";
-//const String str_GREEN PROGMEM = "GREEN";
-//const String str_BLACK PROGMEM = "BLACK";
-//const String str_RED PROGMEM = "RED";
-
-
-
-
-//void start_recipe1 (program&); 
 void setup() {
   enc.begin(); 
   display.begin(&Adafruit128x64, OLED_CS, OLED_DC, OLED_CLK, OLED_DATA, OLED_RESET);
@@ -238,6 +209,7 @@ void loop() {
   
   if (!Btn){
     delay(500);
+    
     screen_recipe((*_prg));
     //delay(500);
     }
