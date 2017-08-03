@@ -1,34 +1,52 @@
-//void CM(byte n)  {
-//
-//  //if ((!r[n].CS.MODE && r[n].CS.CONTROL && !r[n].CS.INTERLOCK && !r[n].STS.isRun )){
-//    if (r[n].STS.isRun){
-//     
-//    startTime = millis();
-//    stopTime  = startTime + (EEPROM.read(r[n].PAR.V) / EEPROM.read(r[n].PAR.K) * 1000);
-//  }
-//  if (r[n].STS.isRun && (stopTime < millis() )){
-////  EEPROM.update(r[n].CS.CONTROL, 0);
-//    r[n].CS.CONTROL = 0;
-//    r[n].STS.isRun = 0;
-//   // r[n].CS.INTERLOCK =1;
-//  }
-//
-//
-//  
-////    else {r[n].STS.isRun = 0;}
-////  r[n].STS.inAuto = r[n].CS.MODE;
-//
-////  if ( EEPROM.read(r[0].PAR.V) < updateDS(0)){r[0].STS.V = 1;}
-////    else {r[0].STS.V = 0;}
-////
-////  if ( EEPROM.read(r[0].PAR.K) > updateDS(0)){r[0].STS.K = 1;}
-////    else {r[0].STS.K = 0;} 
-// 
-//  if ( r[n].STS.isRun ){
-//  digitalWrite(EEPROM.read(r[n].PAR.Pin), HIGH);
-//  r[n].PAR.PV = (stopTime - millis())/1000;
-//}
-//    else {digitalWrite(EEPROM.read(r[n].PAR.Pin), LOW);}     
-//    
-//  }
-//    
+void start_ch (byte V, byte K, byte Pin, const String &Name)
+{
+  startTime_ch = millis();
+  stopTime_ch = startTime_ch + ((V / K) * 1000);
+ 
+  display.clear();
+  display.setCursor(0,0);
+  display.print("Ch "); 
+  display.println(Name);
+
+// // display.println(startTime_ch);
+// // display.println(stopTime_ch);
+  display.print("V = ");
+  display.println(V);
+//  display.print("K = ");
+//  display.println(K);
+  display.print("Pin = ");
+  display.println(Pin);
+  byte line[20]={};
+  while(1){
+
+    digitalWrite(Pin, HIGH);
+
+    display.setCursor(0,10);
+    display.print((stopTime_ch - millis())/1000);
+ //   display.
+    if (millis() > stopTime_ch) {digitalWrite(Pin, LOW); break;}
+    
+  } 
+
+}
+
+
+void start_recipe(struct program &prg)  {
+
+    if (prg.Start && !prg.IsRun){
+
+      prg.IsRun = 1;  
+      start_ch(EEPROM.read(prg.ch1.V), EEPROM.read(prg.ch1.K), EEPROM.read(prg.ch1.Pin), str[1]); 
+      start_ch(EEPROM.read(prg.ch2.V), EEPROM.read(prg.ch2.K), EEPROM.read(prg.ch2.Pin), str[2]); 
+      start_ch(EEPROM.read(prg.ch3.V), EEPROM.read(prg.ch3.K), EEPROM.read(prg.ch3.Pin), str[3]); 
+      start_ch(EEPROM.read(prg.ch4.V), EEPROM.read(prg.ch4.K), EEPROM.read(prg.ch4.Pin), str[4]); 
+      prg.IsRun = 0; 
+      prg.Start = 0;
+      prg.Stop = 1;
+    
+    
+
+  }
+
+}
+    

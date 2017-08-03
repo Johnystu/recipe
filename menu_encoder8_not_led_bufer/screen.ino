@@ -1,4 +1,4 @@
-void screen_recipe(struct program prg){
+void screen_recipe(struct program& prg){
   i=0;
   byte s=i;
   unsigned long prevTime=millis();
@@ -41,17 +41,25 @@ void screen_recipe(struct program prg){
     
     if (i == 0) {display.print("=>");}
 //    else {display.setTextColor(WHITE);}
-    display.print("EXIT");
+    display.println("EXIT");
     
     if (i == 4){i=0;}
-    
+      display.print(" "); 
+ //    display.print(startTime);
+  //   display.println(prg.Start);
+
+//     display.println(prg.IsRun); 
+//    display.print(" "); 
+//     display.print(stopTime);    
+ //    display.println(stopTime - millis())/1000;
+      start_recipe(prg);
  //   display.display();
   // if ((!Btn && i == 0) || (millis()-  prevTime>10000)){  break;}
    if (!Btn){
      delay(500);
      switch (i){
-       //case 1:{screen_change_ch(prg); prevTime=millis(); break;}
-       //case 2:{screen_change_ch(prg.ch2); prevTime=millis(); break;}
+       case 1:{prg.Start = true; prg.Stop = false; prevTime=millis(); break;}
+       case 2:{prg.Stop = true; prg.Start = false; prevTime=millis(); break;}
        case 3:{screen_change_ch(prg);  display.clear();   prevTime=millis(); break;}
        //case 4:{screen_ch_setting(prg.ch4); prevTime=millis(); break;}       
  //      case 0:{break;}
@@ -65,7 +73,7 @@ void screen_recipe(struct program prg){
   }//while
 } //screen
 
-void screen_change_ch(struct program prg){
+void screen_change_ch(struct program &prg){
   i=0;
   byte s=i;
   unsigned long prevTime=millis();
