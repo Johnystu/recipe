@@ -99,11 +99,8 @@ struct channel
       display.print((stopTime - millis())/1000);
       if (millis() > stopTime) {digitalWrite(_Pin, LOW); break;}
       
-    } 
-  
+      }
     };
-
-
 };
 struct program
 {
@@ -129,9 +126,10 @@ struct program
 #define count_device  3 //количество устройств
 //add r[count_device]; //создаём массив этих устройств 
 program prg1, prg2, prg3;
-
-
 program prg[count_device] = {prg1, prg2, prg3};
+
+
+String inString;
 
 void setup() {
   enc.begin(); 
@@ -140,32 +138,132 @@ void setup() {
 
   eeprom_str_adr(); 
   initialization();
-// Serial.begin(9600);
+  
+  Serial.begin(9600);
+  Serial.println("RCP Connection manager:");
+  //Serial.println("Choise Recipe:");
+  for (byte y=0; y <= count_device-1; y++){
+  Serial.print(y);
+  Serial.print(": ");
+  Serial.println(prg[y].RCP_Name); 
+  Serial.print(prg[y].ch1.ch_name);
+  Serial.print(": ");  
+  Serial.print(EEPROM.read(prg[y].ch1.V));
+  Serial.println("ml");
+  Serial.print(prg[y].ch2.ch_name);
+  Serial.print(": "); 
+  Serial.print(EEPROM.read(prg[y].ch2.V));
+  Serial.println("ml");
+  Serial.print(prg[y].ch3.ch_name);
+  Serial.print(": ");  
+  Serial.print(EEPROM.read(prg[y].ch3.V));
+  Serial.println("ml");
+  Serial.print(prg[y].ch4.ch_name);
+  Serial.print(": "); 
+  Serial.print(EEPROM.read(prg[y].ch4.V));
+  Serial.println("ml");
+  Serial.println(); 
  
+ 
+ prg[0].ch1.K = 10;
+  prg[0].ch1.V = 12;
+  prg[0].ch1.Pin = 14;
+  prg[0].ch1.ch_name = str[1];
+  
+   }
+
+//  Serial.print("1:");
+//  Serial.println(prg[0].RCP_Name);  
+//  Serial.print("2:");
+//  Serial.println(prg[1].RCP_Name);  
+//  Serial.print("3:");
+//  Serial.println(prg[2].RCP_Name);  
+
+  
+
 //  for(byte n = 0; n < count_device; n++) {
 //    CM(n);
 //    structures(n);
 //    }  
 
   pinMode(buttonPin, INPUT); 
- // for(byte n = 0; n < 10; n++) {
-  display.clear();
- // display.setCursor(0,0);
-//  display.setTextColor(WHITE);
-
- // display.setTextSize(n);
-
- // display.println("green garden");
-
- // display.display();
-
- // }
+   display.clear();
 
 }
 
 void loop() {
 
+if (Serial.available() > 0) {
+    int inByte = Serial.read();
 
+ 
+    switch (inByte) {
+    case 'a':    
+      prg[0].start();
+      break;
+    case 'b':    
+      prg[1].start();
+      break;
+    case 'c':    
+      prg[2].start();
+      break;
+    case 't':    
+      Serial.println(updateDS(0));
+      break;
+    case '?':    
+      Serial.println("help:");
+      Serial.println("a: CHERENKI");
+      Serial.println("b: VEGA");
+      Serial.println("c: CVETENIE");
+      Serial.println("t: temp");
+      
+      
+      
+      
+      break;
+      
+      
+      
+      
+    case 13:
+      break;
+    case 10:
+      break;
+
+
+      
+
+    default:
+
+     Serial.println("Error:Unknown command");
+    }
+
+    
+      
+   
+   
+//   //Serial.flush();
+//   //switch(action){
+//     if (action[0] == "1"){
+//            Serial.print("You choise recipe: ");
+//            Serial.println(action);
+//            prg[0].start();
+//            Serial.print("Batch is OK");
+//     }
+//     if (action[0] == "2"){
+//            prg[1].start();
+//            Serial.print("Batch is OK");
+//     }
+//     if (action == "3"){
+//            prg[2].start();
+//            Serial.print("Batch is OK");
+//     }
+//            
+//     else {
+//            Serial.println("Error:Unknown command");
+//            
+//   }
+}
   //for(byte n = 0; n < count_device; n++) {
 //    start_recipe(prg1);
 //    structures(n);
