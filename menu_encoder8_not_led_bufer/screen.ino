@@ -97,52 +97,29 @@ void screen_change_ch(struct program &prg){
  //   display.setTextColor(WHITE);
     display.println(prg.RCP_Name);
     display.println();
-    if (i == 1) {display.print("=>");}
-   // else {display.setTextColor(WHITE);}
-    display.println(prg.ch1.ch_name);
- 
     
-    if (i == 2) {display.print("=>");}
-  //  else {display.setTextColor(WHITE);}
-//    display.print("V=");
-    display.println(prg.ch2.ch_name);
-    //display.println(rele1.PAR.Pin);
+    for (byte x=0; x<= count_channel-1; x++){
+      if (i == x) {display.print("=>");}
+      display.println(prg.ch[x].ch_name);
+    }
     
-    if (i == 3) {display.print("=>");}
-  //  else {display.setTextColor(WHITE);}
-//    display.print("Pin=");
-    display.println(prg.ch3.ch_name);
- 
-     if (i == 4) {display.print("=>");}
-  //  else {display.setTextColor(WHITE);}
-//    display.print("Pin=");
-    display.println(prg.ch4.ch_name);
     display.println();
  
     
-    if (i == 0) {display.print("=>");}
- //   else {display.setTextColor(WHITE);}
-    display.print("EXIT");
+    if (i == count_channel) {display.print("=>");}
+      display.print("EXIT");
     
-    if (i == 5){i=0;}
+    if (i == count_channel + 1){i=0;}
     
-//    display.display();
-  // if ((!Btn && i == 0) || (millis()-  prevTime>10000)){  break;}
-   if (!Btn){
-     delay(500);
-     switch (i){
-       case 1:{screen_ch_setting(prg.ch1); prevTime=millis(); break;}
-       case 2:{screen_ch_setting(prg.ch2); prevTime=millis(); break;}
-       case 3:{screen_ch_setting(prg.ch3); prevTime=millis(); break;}
-       case 4:{screen_ch_setting(prg.ch4); prevTime=millis(); break;}       
- //      case 0:{break;}
-      
+    if (!Btn && i < count_channel){
+       delay(500);
+       screen_ch_setting(prg.ch[i]);
+       display.clear();  
+       prevTime=millis();
+  
    }
-   
- }
 
-
-    if ((!Btn && i == 0) || (millis()-  prevTime>10000)){delay(500); break;}
+    if ((!Btn && i == count_channel) || (millis()-  prevTime>10000)){delay(500); break;}
 
 
   }//while

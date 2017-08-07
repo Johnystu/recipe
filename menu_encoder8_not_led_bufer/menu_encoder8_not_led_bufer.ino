@@ -41,26 +41,15 @@ SSD1306AsciiSoftSpi display;
 
 #define buttonPin  2     // кнопка эенкодера
 #define Btn digitalRead(buttonPin)
-//#define Btn  attachInterrupt(0, blink, RISING);
-
-bool step_ch1 = 0;
-bool step_ch2 = 0;
-bool step_ch3 = 0;
-bool step_ch4 = 0;
 
 unsigned long startTime_ch;
 unsigned long stopTime_ch;
 
-const String str[5] = {" ", "PH", "GREEN", "BLACK", "RED"};
+#define count_channel  4 //количество каналов дозаторов
+const String channel_name[count_channel] = {"PH", "GREEN", "BLACK", "RED"};
 
-struct Parametr
-{
-  float PV;
-  byte Pin;
-  byte EEPROM_ADR;
-  byte V;
-  byte K;
-};
+#define count_recipe  3 //количество рецептов
+const String recipe_name[count_recipe] = {"Baby", "Vega", "Cvet"};
 
 struct channel
 {
@@ -102,34 +91,28 @@ struct channel
       }
     };
 };
+
+
 struct program
 {
-  channel ch1;
-  channel ch2;
-  channel ch3;
-  channel ch4;
+
+  channel ch[count_channel];
+
   bool Start;
   bool Stop;
   bool IsRun;
   String RCP_Name;
 
   void start(){
-    ch1.start();
-    ch2.start();
-    ch3.start();
-    ch4.start();
+    ch[0].start();
+    ch[1].start();
+    ch[2].start();
+    ch[3].start();
     };
 };
 
+program prg[count_recipe];// 
 
-
-#define count_device  3 //количество устройств
-//add r[count_device]; //создаём массив этих устройств 
-program prg1, prg2, prg3;
-program prg[count_device] = {prg1, prg2, prg3};
-
-
-String inString;
 
 void setup() {
   enc.begin(); 
@@ -140,51 +123,25 @@ void setup() {
   initialization();
   
   Serial.begin(9600);
-  Serial.println("RCP Connection manager:");
-  //Serial.println("Choise Recipe:");
-  for (byte y=0; y <= count_device-1; y++){
-  Serial.print(y);
-  Serial.print(": ");
-  Serial.println(prg[y].RCP_Name); 
-  Serial.print(prg[y].ch1.ch_name);
-  Serial.print(": ");  
-  Serial.print(EEPROM.read(prg[y].ch1.V));
-  Serial.println("ml");
-  Serial.print(prg[y].ch2.ch_name);
-  Serial.print(": "); 
-  Serial.print(EEPROM.read(prg[y].ch2.V));
-  Serial.println("ml");
-  Serial.print(prg[y].ch3.ch_name);
-  Serial.print(": ");  
-  Serial.print(EEPROM.read(prg[y].ch3.V));
-  Serial.println("ml");
-  Serial.print(prg[y].ch4.ch_name);
-  Serial.print(": "); 
-  Serial.print(EEPROM.read(prg[y].ch4.V));
-  Serial.println("ml");
-  Serial.println(); 
- 
- 
- prg[0].ch1.K = 10;
-  prg[0].ch1.V = 12;
-  prg[0].ch1.Pin = 14;
-  prg[0].ch1.ch_name = str[1];
+  Serial.println("RCP Connection manager");
+  Serial.println("Available recipes:");
   
+  //Serial.println("Choise Recipe:");
+  for (byte y=0; y <= count_recipe-1; y++){
+    Serial.print(y);
+    Serial.print(": ");
+    Serial.println(prg[y].RCP_Name); 
+    for (byte x=0; x<= count_channel-1; x++){
+
+      Serial.print(prg[y].ch[x].ch_name);
+      Serial.print(": ");  
+      Serial.print(EEPROM.read(prg[y].ch[x].V));
+      Serial.println("ml");
+ 
+      }
+     Serial.println();
    }
 
-//  Serial.print("1:");
-//  Serial.println(prg[0].RCP_Name);  
-//  Serial.print("2:");
-//  Serial.println(prg[1].RCP_Name);  
-//  Serial.print("3:");
-//  Serial.println(prg[2].RCP_Name);  
-
-  
-
-//  for(byte n = 0; n < count_device; n++) {
-//    CM(n);
-//    structures(n);
-//    }  
 
   pinMode(buttonPin, INPUT); 
    display.clear();
@@ -195,76 +152,51 @@ void loop() {
 
 if (Serial.available() > 0) {
     int inByte = Serial.read();
-
+    if ((inByte < (count_recipe + 48)) && (inByte >= 48)){ 
  
-    switch (inByte) {
-    case 'a':    
-      prg[0].start();
-      break;
-    case 'b':    
-      prg[1].start();
-      break;
-    case 'c':    
-      prg[2].start();
-      break;
-    case 't':    
-      Serial.println(updateDS(0));
-      break;
-    case '?':    
-      Serial.println("help:");
-      Serial.println("a: CHERENKI");
-      Serial.println("b: VEGA");
-      Serial.println("c: CVETENIE");
-      Serial.println("t: temp");
+    
+      Serial.print("Start ");
+      Serial.println(prg[inByte-48].RCP_Name);      
+      prg[inByte-48].start();
+      Serial.print("Batch ");
+      Serial.print(prg[inByte-48].RCP_Name);
+      Serial.println(" is Done");     
+
+    }
+    else {
       
-      
-      
-      
-      break;
-      
-      
-      
-      
-    case 13:
-      break;
-    case 10:
-      break;
+      switch (inByte) {
+      case 't':    
+        Serial.println(updateDS(0));
+        break;
+      case '?':    
+        Serial.println("help:");
+        Serial.println("0: CHERENKI");
+        Serial.println("1: VEGA");
+        Serial.println("2: CVETENIE");
+        Serial.println("t: temp");
+  
+        break;
+  
+      case 13:
+        break;
+      case 10:
+        break;
 
 
       
 
     default:
+     Serial.print(inByte);
 
-     Serial.println("Error:Unknown command");
+     
+     Serial.println(": BAD command");
+    }
     }
 
-    
-      
-   
-   
-//   //Serial.flush();
-//   //switch(action){
-//     if (action[0] == "1"){
-//            Serial.print("You choise recipe: ");
-//            Serial.println(action);
-//            prg[0].start();
-//            Serial.print("Batch is OK");
-//     }
-//     if (action[0] == "2"){
-//            prg[1].start();
-//            Serial.print("Batch is OK");
-//     }
-//     if (action == "3"){
-//            prg[2].start();
-//            Serial.print("Batch is OK");
-//     }
-//            
-//     else {
-//            Serial.println("Error:Unknown command");
-//            
-//   }
+
 }
-  //for(byte n = 0; n < count_device; n++) {
+  //for(byte n = 0; n < count_recipe; n++) {
 //    start_recipe(prg1);
 //    structures(n);
  //   }
@@ -302,8 +234,8 @@ if (Serial.available() > 0) {
     
   encoder();
   
-  if (i >= count_device){i=0;}
-  if (i < 0){i= count_device - 1;}   
+  if (i >= count_recipe){i=0;}
+  if (i < 0){i= count_recipe - 1;}   
   
   if (!Btn){
     delay(500);
