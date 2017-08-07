@@ -169,7 +169,9 @@ if (Serial.available() > 0) {
       case 't':    
         Serial.println(updateDS(0));
         break;
-      case '?':    
+      case '?': 
+   
+      
         Serial.println("help:");
         Serial.println("0: CHERENKI");
         Serial.println("1: VEGA");
