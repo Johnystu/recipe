@@ -2,7 +2,7 @@
 #include <iarduino_Encoder_tmr.h>             //  Подключаем библиотеку iarduino_Encoder_tmr для работы с энкодерами через аппаратный таймер
 iarduino_Encoder_tmr enc(5,6);   
 int    i = 0;  
-
+int _i = 0;
 #include <SPI.h>
 #include <Wire.h>
 //#include <Adafruit_GFX.h>
@@ -62,12 +62,12 @@ struct channel
   unsigned long stopTime;
  
   void start(){
-    byte _K = EEPROM.read(K); 
+    unsigned int _K = EEPROM_uint_read(K); 
     byte _V = EEPROM.read(V);
     byte _Pin = EEPROM.read(Pin);
     
     startTime = millis();
-    stopTime = startTime + ((_V / _K) * 1000);
+    stopTime = startTime + (_V * _K);
  
     display.clear();
     display.setCursor(0,0);
@@ -90,6 +90,52 @@ struct channel
       
       }
     };
+    
+  void correction(){
+    unsigned int _K = EEPROM_uint_read(K); 
+    byte _V = EEPROM.read(V);
+    byte _Pin = EEPROM.read(Pin);
+    
+    digitalWrite(_Pin, HIGH);   
+    startTime = millis();
+  
+ 
+    display.clear();
+    display.setCursor(0,0);
+  
+    display.print("Ch "); 
+    display.println(ch_name);
+
+    display.println("10ml adjustment");
+    display.println("Push Btn to stop");
+    display.println("and fix value K");
+    display.print("Now K=");    
+    display.println(_K);    
+    
+ //   display.println(_V);
+
+    display.print("Pin = ");
+    display.println(_Pin);
+  
+    while(1){
+      //display.clear();
+      if (!Btn){
+        stopTime = millis();
+        digitalWrite(_Pin, LOW);
+//        display.clear();
+        _K = (stopTime - startTime)/10;
+        EEPROM_uint_write(K, _K); // 10 это колибровка насоса по 10милиграмам(измеряемый объем)
+ //       display.println(_K);
+ //       display.println(EEPROM_uint_read(K));
+        
+        delay(5000);
+        display.clear();
+        break;
+              }
+  
+            }
+    };
+    
 };
 
 
@@ -209,26 +255,48 @@ if (Serial.available() > 0) {
   display.println("PRESS BTN");
 //  start_recipe(prg1);
   program *_prg = &prg[i];
+  display.print(i); 
+  display.print(" ");
   display.println((*_prg).RCP_Name);
-  display.println(i); 
+ 
+  display.print((*_prg).ch[0].ch_name);
+  display.print("= ");
+  display.println(EEPROM.read((*_prg).ch[0].V));
 
+  display.print((*_prg).ch[1].ch_name);
+  display.print("= ");
+  display.println(EEPROM.read((*_prg).ch[1].V));
+  
+  display.print((*_prg).ch[2].ch_name);
+  display.print("= ");
+  display.println(EEPROM.read((*_prg).ch[2].V));
+  
+  display.print((*_prg).ch[3].ch_name);
+  display.print("= ");
+  display.println(EEPROM.read((*_prg).ch[3].V));
+  
+
+  
+  
+  
+  
  // display.println(i);
 //    display.write(i);
 //  display.println(i);
-  display.setCursor(56,9);
+//  display.setCursor(56,9);
 //  display.print("STS.inAuto=");
  // display.println(r[i].STS.inAuto);
-  display.setCursor(56,18);
+ // display.setCursor(56,18);
  // display.print("STS.isRun=");
  // display.println(r[i].STS.isRun); 
- display.setCursor(56,27);
-  display.print("start = ");
-     display.println(prg[i].Start);
-     display.setCursor(56,36);
-  display.print("stop = "); 
-     display.println(prg[i].Stop);
-     display.setCursor(56,45);
-  display.write(i);
+// display.setCursor(56,27);
+//  display.print("start = ");
+//     display.println(prg[i].Start);
+//     display.setCursor(56,36);
+//  display.print("stop = "); 
+//     display.println(prg[i].Stop);
+//     display.setCursor(56,45);
+//  display.write(i);
   display.setCursor(56,54);
   display.print("temp="); 
   display.println(updateDS(0));  
@@ -236,6 +304,7 @@ if (Serial.available() > 0) {
     
   encoder();
   
+  if (_i != i) {display.clear(); _i=i;} 
   if (i >= count_recipe){i=0;}
   if (i < 0){i= count_recipe - 1;}   
   

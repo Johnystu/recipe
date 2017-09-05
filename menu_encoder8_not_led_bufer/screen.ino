@@ -154,12 +154,13 @@ void screen_ch_setting(struct channel ch){
     if (i == 1) {display.print("=>");}
  //   else {display.setTextColor(WHITE);}
     display.print("K=");
-    display.println(EEPROM.read(ch.K));
-    
+    display.print(EEPROM_uint_read(ch.K));
+    display.println("mSec");    
     if (i == 2) {display.print("=>");}
  //   else {display.setTextColor(WHITE);}
     display.print("V=");
-    display.println(EEPROM.read(ch.V));
+    display.print(EEPROM.read(ch.V));
+    display.println(" ml");
     //display.println(rele1.PAR.Pin);
     
     if (i == 3) {display.print("=>");}
@@ -179,7 +180,9 @@ void screen_ch_setting(struct channel ch){
 
    if (!Btn){
      switch (i){
-       case 1:{write_value_analog(ch.K); prevTime=millis(); break;}
+       //case 1:{write_value_analog(ch.K); prevTime=millis(); break;}
+       case 1:{delay(500); ch.correction(); prevTime=millis(); break;}
+       //case 2:{EEPROM_uint_write(ch.V, 0); prevTime=millis(); break;}     
        case 2:{write_value_analog(ch.V); prevTime=millis(); break;}
        case 3:{write_value_analog(ch.Pin);prevTime=millis(); break;}
       // case 0: break;
@@ -199,28 +202,28 @@ void screen_ch_setting(struct channel ch){
 
 
 
-void write_value_analog(byte addres)
+void write_value_analog(int addres)
 {
   digitalWrite(13, HIGH);
-  int memEncoder_position = i; //запоминаем значение энкодера
-  byte x;//вводим новую переменную
-  i = EEPROM.read(addres);
- 
+  unsigned int memEncoder_position = i; //запоминаем значение энкодера
+  unsigned int x;//вводим новую переменную
+  //i = EEPROM.read(addres);
+  i = EEPROM_uint_read(addres);
        
   
   while(!Btn)
   {
     x = i;
-    int a=enc.read();                         //  Читаем состояние энкодера в переменную a
+    unsigned int a=enc.read();                         //  Читаем состояние энкодера в переменную a
     if(a){i=i+a;}                     //  Если энкодер зафиксировал поворот, то ...
        /* i+=a*/                    //  Меняем значение переменной i на 1, т.к. в переменной a находится -1 (при повороте влево), или +1 (при повороте вправо).
-   byte s;
+   unsigned int s;
    if (s!=x){  display.clear(); s=x;}
   //  display.clearDisplay();
     display.setCursor(0,0);
     
-    EEPROM.update(addres, x);
-
+    //EEPROM.update(addres, x);
+    EEPROM_uint_write(addres, x);
     display.println(x);
  //   display.display();
     
