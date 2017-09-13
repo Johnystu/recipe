@@ -34,10 +34,12 @@ DallasTemperature sensors(&oneWire);
 #define OLED_DATA 9
 #define OLED_RESET 8
 
+#define I2C_ADDRESS 0x3C
 #include "SSD1306Ascii.h"
-#include "SSD1306AsciiSoftSpi.h"
+#include "SSD1306AsciiAvrI2c.h"
 
-SSD1306AsciiSoftSpi display;
+SSD1306AsciiAvrI2c display;
+
 
 #define buttonPin  2     // кнопка эенкодера
 #define Btn digitalRead(buttonPin)
@@ -162,7 +164,8 @@ program prg[count_recipe];//
 
 void setup() {
   enc.begin(); 
-  display.begin(&Adafruit128x64, OLED_CS, OLED_DC, OLED_CLK, OLED_DATA, OLED_RESET);
+
+  display.begin(&Adafruit128x64, I2C_ADDRESS);
   display.setFont(Adafruit5x7);
 
   eeprom_str_adr(); 
@@ -191,7 +194,15 @@ void setup() {
 
   pinMode(buttonPin, INPUT); 
     pinMode(4, OUTPUT); 
-
+    pinMode(9, OUTPUT);
+    pinMode(10, OUTPUT);  
+    pinMode(11, OUTPUT);
+    pinMode(12, OUTPUT);  
+    
+    
+    
+    
+    
    display.clear();
 
 }
