@@ -82,13 +82,22 @@ struct channel
 
     display.print("Pin = ");
     display.println(_Pin);
-  
+
+    Serial.print("Dosing: ");    
+    Serial.println(ch_name);
+
+    
     while(1){
   
       digitalWrite(_Pin, HIGH);
       display.setCursor(0,10);
       display.print(_V-((stopTime - millis())/_K));
-      if (millis() > stopTime) {digitalWrite(_Pin, LOW); break;}
+      if (millis() > stopTime) {
+        digitalWrite(_Pin, LOW); 
+        Serial.print(ch_name);
+        Serial.println(" Ready");
+        break;
+      }
       
       }
     };
@@ -143,23 +152,22 @@ struct channel
 
 struct program
 {
-
   channel ch[count_channel];
 
-  bool Start;
+  bool Start; 
   bool Stop;
   bool IsRun;
   String RCP_Name;
 
   void start(){
-    ch[0].start();
-    ch[1].start();
-    ch[2].start();
-    ch[3].start();
-    };
+    for (byte x=0; x<= count_channel-1; x++){
+      ch[x].start();
+    }
+
+  };
 };
 
-program prg[count_recipe];// 
+program prg[count_recipe];// создали объекты рецептов
 
 
 void setup() {
@@ -193,133 +201,45 @@ void setup() {
 
 
   pinMode(buttonPin, INPUT); 
-    pinMode(4, OUTPUT); 
-    pinMode(9, OUTPUT);
-    pinMode(10, OUTPUT);  
-    pinMode(11, OUTPUT);
-    pinMode(12, OUTPUT);  
-    
-    
-    
-    
-    
-   display.clear();
-
+  
+  
+  for (byte y=0; y <= count_recipe-1; y++){
+    for (byte x=0; x<= count_channel-1; x++){
+      pinMode(EEPROM.read(prg[y].ch[x].Pin), OUTPUT);
+    }
+  }
+  
+  display.clear();
 }
 
 void loop() {
 
-if (Serial.available() > 0) {
-    int inByte = Serial.read();
-    if ((inByte < (count_recipe + 48)) && (inByte >= 48)){ 
- 
-    
-      Serial.print("Start ");
-      Serial.println(prg[inByte-48].RCP_Name);      
-      prg[inByte-48].start();
-//      Serial.println(_V-((stopTime - millis())/_K));
-      Serial.print("Batch ");
-      Serial.print(prg[inByte-48].RCP_Name);
-      Serial.println(" is Done");     
+serial();
 
-    }
-    else {
-      
-      switch (inByte) {
-      case 't':    
-        Serial.println(updateDS(0));
-        break;
-      case '?': 
-   
-      
-        Serial.println("help:");
-        Serial.println("0: CHERENKI");
-        Serial.println("1: VEGA");
-        Serial.println("2: CVETENIE");
-        Serial.println("t: temp");
-  
-        break;
-  
-      case 13:
-        break;
-      case 10:
-        break;
-
-
-      
-
-    default:
-     Serial.print(inByte);
-
-     
-     Serial.println(": BAD command");
-    }
-    }
-
-
-}
-  //for(byte n = 0; n < count_recipe; n++) {
-//    start_recipe(prg1);
-//    structures(n);
- //   }
-//  display.clearDisplay();
   display.setCursor(0,0);
-//  display.setTextSize(1);
- // display.setTextColor(WHITE);
   display.println("PRESS BTN");
-//  start_recipe(prg1);
+
   program *_prg = &prg[i];
   display.print(i); 
   display.print(" ");
   display.println((*_prg).RCP_Name);
  
-  display.print((*_prg).ch[0].ch_name);
-  display.print("= ");
-  display.println(EEPROM.read((*_prg).ch[0].V));
+   for (byte x=0; x<= count_channel-1; x++){
+    display.print((*_prg).ch[x].ch_name);
+    display.print("= ");
+    display.println(EEPROM.read((*_prg).ch[x].V));
 
-  display.print((*_prg).ch[1].ch_name);
-  display.print("= ");
-  display.println(EEPROM.read((*_prg).ch[1].V));
+   }
+   
   
-  display.print((*_prg).ch[2].ch_name);
-  display.print("= ");
-  display.println(EEPROM.read((*_prg).ch[2].V));
-  
-  display.print((*_prg).ch[3].ch_name);
-  display.print("= ");
-  display.println(EEPROM.read((*_prg).ch[3].V));
-  
-
-  
-  
-  
-  
- // display.println(i);
-//    display.write(i);
-//  display.println(i);
-//  display.setCursor(56,9);
-//  display.print("STS.inAuto=");
- // display.println(r[i].STS.inAuto);
- // display.setCursor(56,18);
- // display.print("STS.isRun=");
- // display.println(r[i].STS.isRun); 
-// display.setCursor(56,27);
-//  display.print("start = ");
-//     display.println(prg[i].Start);
-//     display.setCursor(56,36);
-//  display.print("stop = "); 
-//     display.println(prg[i].Stop);
-//     display.setCursor(56,45);
-//  display.write(i);
   display.setCursor(56,54);
   display.print("temp="); 
   display.println(updateDS(0));  
- // display.display();
     
   encoder();
   
   if (_i != i) {display.clear(); _i=i;} 
-  if (i >= count_recipe){i=0;}
+  if (i > count_recipe-1){i=0;}
   if (i < 0){i= count_recipe - 1;}   
   
   if (!Btn){

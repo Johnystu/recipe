@@ -14,10 +14,8 @@ void screen_recipe(struct program& prg){
         display.clear(); 
       }
       
-   // display.clearDisplay();
     display.setCursor(0,0);
-   // display.setTextSize(1);
-
+ 
     if (i == -1){i=3;}
 
  //   display.setTextColor(WHITE);
@@ -46,16 +44,9 @@ void screen_recipe(struct program& prg){
     
     if (i == 4){i=0;}
       display.print(" "); 
- //    display.print(startTime);
-  //   display.println(prg.Start);
 
-//     display.println(prg.IsRun); 
-//    display.print(" "); 
-//     display.print(stopTime);    
- //    display.println(stopTime - millis())/1000;
       start_recipe(prg);
- //   display.display();
-  // if ((!Btn && i == 0) || (millis()-  prevTime>10000)){  break;}
+
    if (!Btn){
      delay(500);
      switch (i){
@@ -89,13 +80,10 @@ void screen_change_ch(struct program &prg){
       display.clear(); 
       }
       
- //   display.clearDisplay();
     display.setCursor(0,0);
-   // display.setTextSize(1);
 
     if (i == -1){i=4;}
 
- //   display.setTextColor(WHITE);
     display.println(prg.RCP_Name);
     display.println();
     
@@ -184,61 +172,21 @@ void screen_ch_setting(struct channel ch){
 
    if (!Btn){
      switch (i){
-       //case 1:{write_value_analog(ch.K); prevTime=millis(); break;}
-       case 1:{delay(500); ch.correction(); prevTime=millis(); break;}
-       //case 2:{EEPROM_uint_write(ch.V, 0); prevTime=millis(); break;}     
-       case 2:{write_value_analog(ch.V); prevTime=millis(); break;}
-       case 3:{write_value_analog(ch.Pin);prevTime=millis(); break;}
+
+       case 1:{delay(500); ch.correction(); break;}
+       case 2:{write_value_analog(ch.V); break;}
+       case 3:{write_value_analog(ch.Pin); break;}
        case 4:{ch.start(); break;}
-      // case 0: break;
-       //case 0:{break;}
-      
-   }//switch
-   
+    
+     }//switch
+  prevTime=millis(); 
  }
 
-
     if ((!Btn && i == 0) || (millis()-  prevTime>10000)){ delay(500); break;}
-
 
   }//while
 } //screen
 
-
-
-
-void write_value_analog(int addres)
-{
-  digitalWrite(13, HIGH);
-  unsigned int memEncoder_position = i; //запоминаем значение энкодера
-  unsigned int x;//вводим новую переменную
-  //i = EEPROM.read(addres);
-  i = EEPROM_uint_read(addres);
-       
-  
-  while(!Btn)
-  {
-    x = i;
-    unsigned int a=enc.read();                         //  Читаем состояние энкодера в переменную a
-    if(a){i=i+a;}                     //  Если энкодер зафиксировал поворот, то ...
-       /* i+=a*/                    //  Меняем значение переменной i на 1, т.к. в переменной a находится -1 (при повороте влево), или +1 (при повороте вправо).
-   unsigned int s;
-   if (s!=x){  display.clear(); s=x;}
-  //  display.clearDisplay();
-    display.setCursor(0,0);
-    
-    //EEPROM.update(addres, x);
-    EEPROM_uint_write(addres, x);
-    display.println(x);
- //   display.display();
-    
-  }//while
-  
-  i=memEncoder_position; //возвращаем значение энкодера в исходное значение
-
-  digitalWrite(13, LOW);
-
-}
 
 
 
