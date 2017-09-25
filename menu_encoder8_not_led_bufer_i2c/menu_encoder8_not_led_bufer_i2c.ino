@@ -62,13 +62,18 @@ struct channel
   bool IsRun;
   unsigned long startTime;
   unsigned long stopTime;
+  
+ // unsigned int _K = EEPROM_uint_read(K);
+ // byte _V = EEPROM.read(V);
+  //byte _Pin = EEPROM.read(Pin);
+
  
   void start(){
     unsigned int _K = EEPROM_uint_read(K); 
     byte _V = EEPROM.read(V);
     byte _Pin = EEPROM.read(Pin);
     
-    startTime = millis();
+    //startTime = millis();
     stopTime = startTime + (_V * _K);
  
     display.clear();
@@ -82,6 +87,11 @@ struct channel
 
     display.print("Pin = ");
     display.println(_Pin);
+    
+    display.print("IsRun = ");
+    display.println(IsRun);
+
+
 
     Serial.print("Dosing: ");    
     Serial.println(ch_name);
@@ -96,6 +106,7 @@ struct channel
         digitalWrite(_Pin, LOW); 
         Serial.print(ch_name);
         Serial.println(" Ready");
+        IsRun = 0;
         break;
       }
       
@@ -159,8 +170,12 @@ struct program
   bool IsRun;
   String RCP_Name;
 
-  void start(){
+  void start(int){
     for (byte x=0; x<= count_channel-1; x++){
+      ch[x].IsRun = 1;
+      ch[x].startTime = millis();
+      
+     // ch[x].stopTime = ch[x].startTime + (ch[x]._V * ch[x]._K);
       ch[x].start();
     }
 

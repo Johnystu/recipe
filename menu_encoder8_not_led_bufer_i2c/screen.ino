@@ -120,7 +120,7 @@ void screen_ch_setting(struct channel ch){
   unsigned long prevTime=millis();
  display.clear(); 
   while(1){ 
- //   structures(id);
+ 
     encoder();
         
     if (s != i) {
@@ -129,19 +129,16 @@ void screen_ch_setting(struct channel ch){
       display.clear(); 
       }
       
-//    display.clearDisplay();
     display.setCursor(0,0);
- //   display.setTextSize(1);
+
 
     if (i == -1){i=3;}
 
-    //if (i == 0) {display.setTextColor(BLACK,WHITE);}
- //  {display.setTextColor(WHITE);}
+
     display.println(ch.ch_name);
     display.println();
 
     if (i == 1) {display.print("=>");}
- //   else {display.setTextColor(WHITE);}
     display.print("K=");
     display.print(EEPROM_uint_read(ch.K));
     display.println("mSec");    
