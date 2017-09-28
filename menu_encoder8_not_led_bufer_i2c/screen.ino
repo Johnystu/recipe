@@ -45,13 +45,13 @@ void screen_recipe(struct program& prg){
     if (i == 4){i=0;}
       display.print(" "); 
 
-      start_recipe(prg);
-
+//      start_recipe(prg);
+    ControlRecipe(prg);
    if (!Btn){
      delay(500);
      switch (i){
        case 1:{prg.Start = true; prg.Stop = false; prevTime=millis(); break;}
-       case 2:{prg.Stop = true; prg.Start = false; prevTime=millis(); break;}
+       case 2:{prg.stop();prevTime=millis(); break;}
        case 3:{screen_change_ch(prg);  display.clear();   prevTime=millis(); break;}
        //case 4:{screen_ch_setting(prg.ch4); prevTime=millis(); break;}       
  //      case 0:{break;}
@@ -59,7 +59,7 @@ void screen_recipe(struct program& prg){
    }
    
  }
-    if ((!Btn && i == 0) || (millis()-  prevTime>10000)){  display.clear();  i=old_i; break;}
+    if ((!Btn && i == 0) || (millis()-  prevTime>100000)){  display.clear();  i=old_i; break;}
 
 
   }//while

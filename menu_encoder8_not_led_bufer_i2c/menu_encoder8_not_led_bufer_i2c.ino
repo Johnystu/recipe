@@ -67,13 +67,13 @@ struct channel
  // byte _V = EEPROM.read(V);
   //byte _Pin = EEPROM.read(Pin);
 
- 
+
   void start(){
     unsigned int _K = EEPROM_uint_read(K); 
     byte _V = EEPROM.read(V);
     byte _Pin = EEPROM.read(Pin);
     
-    //startTime = millis();
+    startTime = millis();
     stopTime = startTime + (_V * _K);
  
     display.clear();
@@ -170,7 +170,7 @@ struct program
   bool IsRun;
   String RCP_Name;
 
-  void start(int){
+  void start(){
     for (byte x=0; x<= count_channel-1; x++){
       ch[x].IsRun = 1;
       ch[x].startTime = millis();
@@ -180,8 +180,16 @@ struct program
     }
 
   };
-};
+  
+  void stop(){
 
+    for (byte x=0; x<= count_channel-1; x++){
+      ch[x].IsRun = 0;
+    }
+    IsRun = false; 
+    Start = false; 
+  }
+};
 program prg[count_recipe];// создали объекты рецептов
 
 
@@ -245,8 +253,10 @@ serial();
     display.println(EEPROM.read((*_prg).ch[x].V));
 
    }
-   
-  
+   for (byte y=0; y <= count_recipe-1; y++){
+     program *_prg = &prg[y];
+     ControlRecipe(*_prg);  
+   }
   display.setCursor(56,54);
   display.print("temp="); 
   display.println(updateDS(0));  
